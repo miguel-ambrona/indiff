@@ -384,16 +384,3 @@ let iterative_heuristic2 ~primitive ~inv_primitive ~attack_type ~k ~n ~oname =
              ), atoms
      )
   |> (fun (sol,_) -> match sol with Some _ -> true | None -> false)
-
-let attacks_main () =
-  let feistel3 _keys inputs = feistel ~n:3 inputs in
-
-  (*
-  let (sol,relations) = heuristic1 ~primitive:feistel3 ~k:0 ~n:2 4 (XOR [Var "1"; Var "3"; Var "5"; Var "7"]) (XOR [Var "0"; Var "2"; Var "4"; Var "6"]) in
-  F.printf "%a\n%a\n" (pp_list ",\n" pp_expr) relations pp_unifier_option sol
-   *)
-  let attack = heuristic ~primitive:feistel3 ~k:0 ~n:2 ~oname:"R" ~context_size:7 in
-  match attack with
-  | None -> F.printf "Not found\n"
-  | Some (sol, relations, _) ->
-     F.printf "%a\n%a\n" (pp_list ",\n" pp_expr) relations pp_unifier sol

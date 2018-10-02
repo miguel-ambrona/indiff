@@ -5,10 +5,7 @@ COREFLAGS=-pkg core_kernel \
 
 .PHONY: install main.native test.native
 
-all: main.native test search
-
-main.native:
-	ocamlbuild $(COREFLAGS) $(OCAMLBUILDFLAGS) ./main.native
+all: test search
 
 OCAMLDEP= ocamlfind ocamldep -package core_kernel \
             -I src one-line
