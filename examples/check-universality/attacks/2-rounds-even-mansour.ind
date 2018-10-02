@@ -1,0 +1,22 @@
+is_universal{
+
+  rounds P invertible.
+
+  oracle R (k,x) :=
+    return P(P(x) + k).
+
+  oracle R^-1 (k,y) :=
+    return P^-1(k + P^-1(y)).
+
+
+  distinguisher :=
+    a <-$ {0,1}^n;
+    b <-$ {0,1}^n;
+    r1 <- P^{-1}(0);
+    r2 <- P^{-1}(b);
+
+    assert r1 + R^{-1}(r2; b) = 0;
+    return 1;
+  .
+
+}.

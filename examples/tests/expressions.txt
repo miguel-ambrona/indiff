@@ -1,0 +1,13 @@
+simplify a + b + Var(x) + c.
+simplify Var(c).
+simplify F^-1(a+b; c) + F^{-1}(b+a; c) + R^(-1)(Var c).
+simplify F(c).
+simplify F^-1(a; F(b+a+b; Var x)).
+simplify R^(-1)_2(R_1(a,b),R_2(a,b)).
+simplify R^(-1)_2(R_2(a,b),R_1(a,b)).
+simplify G(R^(-1)_1(R_1(a+c,b+d),R_2(c+a,d+F(a;F^-1(a;b)))); G^-1(c+a;Var X)).
+simplify b+a.
+simplify b + (a + c).
+simplify (b+d) + (c + b + a).
+simplify a + a.
+simplify a + 0.

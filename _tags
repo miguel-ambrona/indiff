@@ -1,0 +1,9 @@
+true: bin_annot, debug
+
+<src>: include
+<src/Util>: include
+<src/Parser>: include
+<src/Algebra>: include
+<src/Test>: include
+
+<src/*>: package(core_kernel)

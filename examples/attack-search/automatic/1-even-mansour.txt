@@ -1,0 +1,13 @@
+(* 1-rounds Even-Mansour *)
+
+search_attack INDCPA {
+
+  rounds P invertible.
+
+  oracle R (k,x) :=
+    return P(x+k) + k.
+
+  oracle R^-1 (k,y) :=
+    return k + P^-1(k+y).
+
+}.

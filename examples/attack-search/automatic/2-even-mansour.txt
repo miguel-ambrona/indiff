@@ -1,0 +1,13 @@
+(* 2-rounds Even-Mansour *)
+
+search_attack Indiff {
+
+  rounds P1,P2 invertible.
+
+  oracle R (k,x) :=
+    return P2(P1(x) + k).
+
+  oracle R^-1 (k,y) :=
+    return P1^-1(k + P2^-1(y)).
+
+}.

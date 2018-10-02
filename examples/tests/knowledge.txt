@@ -1,0 +1,13 @@
+knowledge x1 + R(x1; Var r1), x2 + Var r1 from {x2} with names = {x1,x2}, {x2} with names = {x1,x2}.
+
+knowledge x1 + R(x1; Var r1), z + Var r1 from {x2} with names = {x1,x2}, {x1} with names = {x1,x2}.
+
+knowledge x2 + R(x3; x2) from {x2} with names = {x1,x2}.
+
+knowledge
+Var V11 + Var V12 + Var V9, Var V11, Var V12
+
+from
+{Var V1, Var V2, Var V3, Var V4, Var v5, Var V6, Var V7, Var V8, Var V9} with names = {},
+{Var V1, Var V2, Var V3, Var V4, Var v5, Var V6, Var V7, Var V8, Var V9} with names = {},
+{Var V1, Var V2, Var V3, Var V4, Var v5, Var V6, Var V7, Var V8, Var V9} with names = {}.

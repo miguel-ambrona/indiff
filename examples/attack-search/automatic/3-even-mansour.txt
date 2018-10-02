@@ -1,0 +1,13 @@
+(* 3-rounds Even-Mansour *)
+
+search_attack Indiff {
+
+  rounds P invertible.
+
+  oracle R (k,x) :=
+    return P(P(P(x) + k) + k).
+
+  oracle R^-1 (k,y) :=
+    return P^-1(k + P^-1(k + P^-1(y))).
+
+}.

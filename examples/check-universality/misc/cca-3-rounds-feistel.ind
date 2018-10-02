@@ -1,0 +1,36 @@
+(* 3-rounds Feistel-Network CCA attack *)
+
+is_universal {
+
+  rounds F1,F2,F3.
+
+  oracle Feistel (x0,x1) :=
+    x2 = x0 + F1(x1);
+    x3 = x1 + F2(x2);
+    x4 = x2 + F3(x3);
+    return x3, x4.
+
+  oracle Feistel^-1 (x3,x4) :=
+    x2 = x4 + F3(x3);
+    x1 = x3 + F2(x2);
+    x0 = x2 + F1(x1);
+    return x0, x1.
+
+  distinguisher :=
+    L <-$ {0,1}^n;
+    L'<-$ {0,1}^n;
+    R <-$ {0,1}^n;
+
+    C1L = Feistel_1(L,R);
+    C1R = Feistel_2(L,R);
+    C2L = Feistel_1(L',R);
+    C2R = Feistel_2(L',R);
+
+    C3L = Feistel^-1_1(C2L, C2R + L + L');
+    C3R = Feistel^-1_2(C2L, C2R + L + L');
+
+    assert C1L + C2L + C3R = R;
+    return 1;
+  .
+
+}.

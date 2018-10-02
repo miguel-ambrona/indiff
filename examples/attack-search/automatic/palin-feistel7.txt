@@ -1,0 +1,27 @@
+(* Palindromic 7-rounds Feistel-Network automatic attack search *)
+
+search_attack INDCCA {
+
+  rounds F1,F2,F3,F4.
+
+  oracle R (x0,x1) :=
+    x2 = x0 + F1(x1);
+    x3 = x1 + F2(x2);
+    x4 = x2 + F3(x3);
+    x5 = x3 + F4(x4);
+    x6 = x4 + F3(x5);
+    x7 = x5 + F2(x6);
+    x8 = x6 + F1(x7);
+    return x7, x8.
+
+  oracle R^-1 (x7,x8) :=
+    x6 = x8 + F1(x7);
+    x5 = x7 + F2(x6);
+    x4 = x6 + F3(x5);
+    x3 = x5 + F4(x4);
+    x2 = x4 + F3(x3);
+    x1 = x3 + F2(x2);
+    x0 = x2 + F1(x1);
+    return x0, x1.
+
+}.

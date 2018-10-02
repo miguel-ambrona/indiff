@@ -1,0 +1,34 @@
+(* Feistel Network 7-rounds *)
+
+unify
+  Var x2 = Var x0 + F1!(Var x1) /\
+  Var x3 = Var x1 + F2!(Var x2) /\
+  Var x4 = Var x2 + F3!(Var x3) /\
+  Var x5 = Var x3 + F4!(Var x4) /\
+  Var x6 = Var x4 + F5!(Var x5) /\
+  Var x7 = Var x5 + F6!(Var x6) /\
+
+  Var x2' = Var x0' + F1!(Var x1') /\
+  Var x3' = Var x1' + F2!(Var x2') /\
+  Var x4' = Var x2' + F3!(Var x3') /\
+  Var x5' = Var x3' + F4!(Var x4') /\
+  Var x6' = Var x4' + F5!(Var x5') /\
+  Var x7' = Var x5' + F6!(Var x6') /\
+
+  Var x2'' = Var x0'' + F1!(Var x1'') /\
+  Var x3'' = Var x1'' + F2!(Var x2'') /\
+  Var x4'' = Var x2'' + F3!(Var x3'') /\
+  Var x5'' = Var x3'' + F4!(Var x4'') /\
+  Var x6'' = Var x4'' + F5!(Var x5'') /\
+  Var x7'' = Var x5'' + F6!(Var x6'') /\
+
+  Var x2''' = Var x0''' + F1!(Var x1''') /\
+  Var x3''' = Var x1''' + F2!(Var x2''') /\
+  Var x4''' = Var x2''' + F3!(Var x3''') /\
+  Var x5''' = Var x3''' + F4!(Var x4''') /\
+  Var x6''' = Var x4''' + F5!(Var x5''') /\
+  Var x7''' = Var x5''' + F6!(Var x6''') /\
+
+  Var x0 + Var x0' + Var x0'' + Var x0''' = 0 /\
+  Var x7 + Var x7' + Var x7'' + Var x7''' = 0
+;.

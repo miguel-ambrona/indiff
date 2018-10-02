@@ -1,0 +1,5 @@
+unify Var X = F(Var X) + F(Var Y).
+
+unify Var X = F(t,s+k; a+b, Var Y) + G(a+c+b).
+
+unify Var X = F(Var X + Var Y) + a.

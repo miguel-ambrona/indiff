@@ -1,0 +1,49 @@
+(* 4-rounds Even-Mansour Attack *)
+
+is_universal {
+
+  rounds P1,P2,P3 invertible.
+
+  oracle R (k,x) :=
+    x1 = P1(x + k);
+    x2 = P2(x1 + k);
+    x3 = P3(x2 + k);
+    return x3 + k.
+
+  oracle R^-1 (k,y) :=
+    x3 = y + k;
+    x2 = k + P3^-1(x3);
+    x1 = k + P2^-1(x2);
+     x = P1^-1(x1);
+    return x + k.
+
+  distinguisher :=
+    x3 <-$ {0,1}^n;
+    k  <-$ {0,1}^n;
+    k' <-$ {0,1}^n;
+
+    y2  = x3 + k;
+    y2' = x3 + k';
+    x2  <- P2^-1(y2);
+    x2' <- P2^-1(y2');
+
+    y1  = x2 + k;
+    y1' = x2' + k';  
+    x1  <- P1^-1(y1);
+    x1' <- P1^-1(y1');
+
+    k''  = y1 + x2';
+    k''' = y1' + x2;
+
+    x    = x1  + k;
+    x'   = x1' + k';
+    x''  = x1  + k'';
+    x''' = x1' + k''';
+
+    assert R(k;x) + R(k';x') + R(k'';x'') + R(k''';	 x''') = 0;
+    assert k <> k''; 
+
+    return 1;
+  .
+
+}.

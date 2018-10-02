@@ -1,0 +1,10 @@
+(* Weird *)
+
+search_attack INDCPA {
+
+  rounds f.
+
+  oracle R(k,x) :=
+    return f(x+k, f(k,x)) + x.
+
+}.

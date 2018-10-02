@@ -1,0 +1,17 @@
+(* 2-rounds Confusion-Diffusion Network from 2015/680 *)
+
+search_attack Indiff {
+
+  rounds P11,P12,P21,P22 invertible.
+
+  oracle R (x1,x2) :=
+    a1 = P11(x1);  a2 = P12(x2);
+    b1 = a2;       b2 = a1;      (* We set pi to be just a swap *)
+    return P21(b1), P22(b2).
+
+  oracle R^-1 (y1,y2) :=
+    b1 = P21^-1(y1);      b2 = P22^-1(y2);
+    a1 = b2;  a2 = b1;
+    return P11^-1(a1), P12^-1(a2).
+
+}.

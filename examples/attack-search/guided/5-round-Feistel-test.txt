@@ -1,0 +1,46 @@
+(* 5 Round Feistel Network, non-trivial relation *)
+
+unify
+  Var x2 = Var x0 + F1!(Var x1) /\
+  Var x3 = Var x1 + F2!(Var x2) /\
+  Var x4 = Var x2 + F3!(Var x3) /\
+  Var x5 = Var x3 + F4!(Var x4) /\
+  Var x6 = Var x4 + F5!(Var x5) /\
+
+  Var x2' = Var x0' + F1!(Var x1') /\
+  Var x3' = Var x1' + F2!(Var x2') /\
+  Var x4' = Var x2' + F3!(Var x3') /\
+  Var x5' = Var x3' + F4!(Var x4') /\
+  Var x6' = Var x4' + F5!(Var x5') /\
+
+  Var x2'' = Var x0'' + F1!(Var x1'') /\
+  Var x3'' = Var x1'' + F2!(Var x2'') /\
+  Var x4'' = Var x2'' + F3!(Var x3'') /\
+  Var x5'' = Var x3'' + F4!(Var x4'') /\
+  Var x6'' = Var x4'' + F5!(Var x5'') /\
+
+  Var x2''' = Var x0''' + F1!(Var x1''') /\
+  Var x3''' = Var x1''' + F2!(Var x2''') /\
+  Var x4''' = Var x2''' + F3!(Var x3''') /\
+  Var x5''' = Var x3''' + F4!(Var x4''') /\
+  Var x6''' = Var x4''' + F5!(Var x5''') /\
+
+  Var x2'4 = Var x0'4 + F1!(Var x1'4) /\
+  Var x3'4 = Var x1'4 + F2!(Var x2'4) /\
+  Var x4'4 = Var x2'4 + F3!(Var x3'4) /\
+  Var x5'4 = Var x3'4 + F4!(Var x4'4) /\
+  Var x6'4 = Var x4'4 + F5!(Var x5'4) /\
+
+  Var x2'5 = Var x0'5 + F1!(Var x1'5) /\
+  Var x3'5 = Var x1'5 + F2!(Var x2'5) /\
+  Var x4'5 = Var x2'5 + F3!(Var x3'5) /\
+  Var x5'5 = Var x3'5 + F4!(Var x4'5) /\
+  Var x6'5 = Var x4'5 + F5!(Var x5'5) /\
+
+  Var x1 + Var x1' + Var x1'' + Var x1''' + Var x1'4 + Var x1'5 = 0 /\
+  Var x6 + Var x6' + Var x6'' + Var x6''' + Var x6'4 + Var x6'5 = 0 /\
+
+  Var x6 <> Var x6'   /\  Var x6 <> Var x6''  /\  Var x6 <> Var x6''' /\ Var x6 <> Var x6'4 /\ Var x6 <> Var x6'5 /\
+
+  Var x1 <> Var x1'   /\  Var x1 <> Var x1''  /\  Var x1 <> Var x1''' /\ Var x1 <> Var x1'4 /\ Var x1 <> Var x1'5
+ .

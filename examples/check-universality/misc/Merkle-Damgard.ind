@@ -1,0 +1,24 @@
+(* 2-rounds Feistel-Network attack *)
+
+is_universal {
+
+  rounds f.
+
+  oracle R1 (IV,m0) :=
+    return f(IV,m0).
+
+  oracle R2 (IV,m0,m1) :=
+    return f(f(IV,m0),m1).
+
+  distinguisher :=
+    m0  <-$ {0,1}^n;
+    m1  <-$ {0,1}^n;
+    iv <-$ {0,1}^n;
+
+    u = R1(iv;m0);
+    v <- f(u,m1);
+    assert R2(iv,m0;m1) = v;
+    return 1;
+  .
+
+}.

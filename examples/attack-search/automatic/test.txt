@@ -1,0 +1,12 @@
+(* Test primitive *)
+
+search_attack Indiff {
+
+  rounds P invertible.
+
+  oracle R (x) :=
+    return P(P(x)).
+
+  oracle R^-1 (y) :=
+    return P^-1(P^-1(y)).
+}.

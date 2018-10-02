@@ -1,0 +1,35 @@
+deduce a+b from {a, c, b+c} with names = {b,c}.
+
+deduce a+b+c from {a, b+a} with names = {a,b,c}.
+
+deduce a+d from {a+b+c, c+d, d+c+a,b+a} with names = {a,b,c,d}.
+
+deduce a from {F(k;a)} with names = {a}.
+
+deduce F(a;b) from {G(a),b} with names = {b}.
+
+deduce F(F(F(a))) from {F(a)} with names = {a}.
+
+deduce F(t;u) from {F(v;t), G_1(a,u), G_2(a,u)} with names = {t,u,a}.
+
+deduce u from {F(v;t), G_1(a,u), G_2(a,u)} with names = {t,u,a}.
+
+deduce 0 from {a} with names = {a}.
+
+deduce F(a;b)+c from {c+d,a+c+d,F(a;d)} with names = {a,c,d}.
+
+deduce F(G(a;b); b) from {G(c;b)} with names = {b}.
+
+deduce x1 + R(x1; Var r1) from {x2} with names = {x1,x2}.
+
+deduce R(x0,x1) from {x1, x1', x0 +  0} with names = {x1,x1',x0}.
+
+deduce R^-1_1(X1' + r9, X1' + r9 +  R_1(0,X1')) from {X1'} with names = {X1',r9}.
+
+deduce Var V5 + R^-1_1(Var r26 + R_1(0,X1'),Var r26) from {X1'} with names = {X1'}.
+
+deduce r29 from {} with names = {x4}.
+
+deduce a from {F(Var x + b; a)} with names = {a,b}.
+
+deduce a from {F(Var x + b; a), c+b} with names = {a,b,c}.

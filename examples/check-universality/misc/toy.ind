@@ -1,0 +1,39 @@
+(* Toy example *)
+
+is_universal {
+
+  rounds P invertible.
+
+  oracle Oracle (k,x) := return P(P(x) + k).
+
+  oracle Oracle^-1 (k,y) := return P^-1(P^-1(y) + k).
+
+  distinguisher :=
+    a <-$ {0,1}^n;
+    b <-$ {0,1}^n;
+    pa <- P(a);
+    pb <- P(b);
+    assert pb = Oracle(b+pa; a);
+    return 1.
+
+}.
+
+
+is_universal {
+
+  rounds P invertible.
+
+  oracle Oracle (k,x) := return P(P(x) + k).
+
+  oracle Oracle^-1 (k,y) := return P^-1(P^-1(y) + k).
+
+  distinguisher :=
+    a <-$ {0,1}^n;
+    b <-$ {0,1}^n;
+    pa <- P(a);
+    pb <- P(b);
+    assert pb = Oracle(b+pa; a);
+    assert pa = Oracle(a+pb; b);
+    return 1.
+
+}.

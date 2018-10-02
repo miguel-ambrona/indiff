@@ -1,0 +1,17 @@
+opam-version: "1.2"
+name:	      "project"
+maintainer:   ["Miguel Ambrona <miguel.ambrona@imdea.org> Alejandro Aguirre <alejandro.aguirre@imdea.org>"]
+author:       ["Miguel Ambrona <miguel.ambrona@imdea.org> Alejandro Aguirre <alejandro.aguirre@imdea.org>"]     
+version:      "2.0.0"
+
+build: [
+  [make]
+]
+
+install: [make "install"]
+
+depends: [
+  "core_kernel"  {build}
+  "menhir"        {build}
+]
+available: [ocaml-version >= "4.02.0"]

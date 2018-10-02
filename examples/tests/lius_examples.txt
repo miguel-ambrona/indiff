@@ -1,0 +1,9 @@
+unify f!(Var x) + f!(Var y) = f!(a) + f!(b).
+unify f!(Var x) + f!(Var y) + f!(Var z) = f!(a) + f!(b) + f!(c).
+unify f!(Var x) + f!(Var y) + f!(Var z) + f!(Var w) = f!(a) + f!(b) + f!(c) + f!(d).
+unify Var x = f!(Var x + Var y).
+unify Var x = f!(Var x + Var y + f!(Var y)).
+unify f!(b) + f!(0) = f!(Var x) + f!(Var y).
+unify f!(Var x, g!(Var y, Var w)) + f!(c, g!(a, Var z)) = Var w + g!(a,c).
+unify f!(Var x, g!(Var y, b)) + f!(c, g!(a, Var z)) = Var w /\ h!(Var w) + h!(d) = 0.
+unify Var x + f!(Var y) + f!(Var x1) = 0 /\ Var y + f!(Var z) + f!(Var x2) = 0 /\ Var z + f!(Var x) + f!(Var x3) = 0.

@@ -1,0 +1,17 @@
+(*static-eq {a, c, b+c} with names = {b,c} vs {a, b+c, b+c} with names = {b,c}.
+
+static-eq {a+b+c, b+c, a+c} with names = {a,b,c} vs {a, b, c} with names = {a,b,c}.
+*)
+
+static-eq {F(a), G(F(a);b)} with names = {a,b} vs {F(b), a} with names = {a,b}.
+
+static-eq {F(a), G(F(a);b)} with names = {a} vs {F(b), a} with names = {a}.
+
+static-eq {F(c), a} with names = {a,c} vs {F(a), G(F(a);b)} with names = {a,c}.
+
+static-eq {F(a), a+b} with names = {a,b} vs {F(a), a+F(b)} with names = {a,b}.
+
+
+(* Attack on 5-Even Mansour static equivalence problem *)
+static-eq {x4, x4', F^-1(y3+x4; y4), F^-1(y3+x4'; y4'), y4'', y4'''} with names = {x4,x4',y3,y4'',y4'''} vs 
+          {x4, x4', F^-1(y3+x4; y4), F^-1(y3+x4'; y4'), F(y1+y1'+y3+x4'; F^-1(y3+x4; y4)), F(y1+y1'+y3+x4; F^-1(y3+x4'; y4'))} with names = {x4,x4',y3,y4'',y4'''}.

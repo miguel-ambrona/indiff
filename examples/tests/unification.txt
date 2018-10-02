@@ -1,0 +1,20 @@
+unify a = Var x /\ c = 0 /\ b <> 0.
+
+unify a = Var y + F(Var x) /\ a = Var x + Var z.
+
+unify Var x = b + F(a; F^(-1)(Var x; b)) + a.
+
+unify F(a; b) = F(Var x; Var y) + F(c; Var z) /\
+      Var z <> F^(-1)(c; F(a; b)).
+
+unify F(Var x) = Var x.
+
+unify Var x = F(k; F^(-1)(Var y; Var x)).
+
+unify Var x = F(k; Var x + Var y).
+
+unify F(Var V + Var W) = Var V + a.
+
+unify Var X = F!(Var X) + F!(Var Y).
+
+unify x1 + R(x1; Var r1) = x2.

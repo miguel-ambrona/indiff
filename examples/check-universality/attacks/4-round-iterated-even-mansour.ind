@@ -1,0 +1,70 @@
+(* 4-rounds Even-Mansour Attack *)
+
+is_universal {
+
+  rounds P1,P2,P3,P4 invertible.
+
+  oracle R (k,x) :=
+    x1 = P1(x);
+    x2 = P2(x1 + k);
+    x3 = P3(x2 + k);
+    x4 = P4(x3 + k);
+    return x4.
+
+  oracle R^-1 (k,y) :=
+    x4 = y;
+    x3 = k + P4^-1(x4);
+    x2 = k + P3^-1(x3);
+    x1 = k + P2^-1(x2);
+     x = P1^-1(x1);
+    return x.
+
+  distinguisher :=
+    y3 <-$ {0,1}^n;
+    x4 <-$ {0,1}^n;
+    x4' <-$ {0,1}^n;
+
+    k = y3 + x4;
+    k' = y3 + x4';
+
+    y4 <- P4(x4);
+    y4' <- P4(x4');
+
+    x1 = R^-1(k; y4);
+    x1' = R^-1(k'; y4');
+
+    assert x1 <> x1';
+
+    y1 <- P1(x1);
+    y1' <- P1(x1');
+    x2 = y1 + k;
+    x2' = y1' + k';
+
+    k'' = y1 + x2';
+    k''' = k'' + k' + k;
+
+    y4'' = R(k''; x1);
+    y4''' = R(k'''; x1');
+
+    assert y4 <> y4';     assert y4 <> y4'';    assert y4 <> y4''';
+    assert y4' <> y4'';   assert y4' <> y4''';
+    assert y4'' <> y4''';
+
+    begin prob choice:
+      case:
+        z <-$ {0,1}^n;
+        z' <-$ {0,1}^n;
+        y <- P4^-1(z);
+        y' <- P4^-1(z');
+        assert y + y' <> x4 + x4';
+        return 1;
+
+      case:
+        y <- P4^-1(y4'');
+        y' <- P4^-1(y4''');
+        assert y + y' = x4 + x4';
+        return 1;
+    end
+  .
+
+}.

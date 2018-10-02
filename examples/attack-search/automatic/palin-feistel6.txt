@@ -1,0 +1,25 @@
+(* 6-rounds Feistel-Network automatic attack search *)
+
+search_attack INDCCA {
+
+  rounds F1,F2,F3.
+
+  oracle R (x0,x1) :=
+    x2 = x0 + F1(x1);
+    x3 = x1 + F2(x2);
+    x4 = x2 + F3(x3);
+    x5 = x3 + F3(x4);
+    x6 = x4 + F2(x5);
+    x7 = x5 + F1(x6);
+    return x6, x7.
+
+  oracle R^-1 (x6,x7) :=
+    x5 = x7 + F1(x6);
+    x4 = x6 + F2(x5);
+    x3 = x5 + F3(x4);
+    x2 = x4 + F3(x3);
+    x1 = x3 + F2(x2);
+    x0 = x2 + F1(x1);
+    return x0, x1.
+
+}.
