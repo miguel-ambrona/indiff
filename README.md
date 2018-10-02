@@ -32,7 +32,7 @@ make
 *4*. To test the tool, run:
 
 ~~~
-./main.native examples/tests/CHOOSE_FILE
+./test.native examples/tests/CHOOSE_FILE
 ~~~
 
 *5*. To reproduce our (checking universality) experiments run:
