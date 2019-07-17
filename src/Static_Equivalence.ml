@@ -127,7 +127,7 @@ let xor_deduce_all frame expr =
            )
 
 let xor_static_equivalence frame1 frame2 =
-  if compare_lists ~compare:String.compare frame1.frame_names frame2.frame_names <> 0 then false
+  if compare_lists_ignore_order ~compare:String.compare frame1.frame_names frame2.frame_names <> 0 then false
   else if (L.length frame1.frame_sigma) <> (L.length frame2.frame_sigma) then false
   else
     let zero_productions1 = xor_deduce_all frame1 Zero in
@@ -270,7 +270,7 @@ let one_dir_fun_static_equivalence frame1 frame2 =
   b
 
 let fun_static_equivalence frame1 frame2 =
-  if compare_lists ~compare:String.compare frame1.frame_names frame2.frame_names <> 0 then false
+  if compare_lists_ignore_order ~compare:String.compare frame1.frame_names frame2.frame_names <> 0 then false
   else if (L.length frame1.frame_sigma) <> (L.length frame2.frame_sigma) then false
   else
     if one_dir_fun_static_equivalence frame1 frame2 then one_dir_fun_static_equivalence frame2 frame1
@@ -303,7 +303,7 @@ let extend_frame frame1 frame2 =
   { frame1 with frame_sigma = (L.map (frame1.frame_sigma @ new_terms_for_sigma1) ~f:simplify_expr ) }
 
 let static_equivalence frame1 frame2 =
-  if compare_lists ~compare:String.compare frame1.frame_names frame2.frame_names <> 0 then false
+  if compare_lists_ignore_order ~compare:String.compare frame1.frame_names frame2.frame_names <> 0 then false
   else if (L.length frame1.frame_sigma) <> (L.length frame2.frame_sigma) then false
   else
     let extension1 = extend_frame frame1 frame2 in

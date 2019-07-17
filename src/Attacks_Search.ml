@@ -203,7 +203,7 @@ let heuristic1 ~primitive ~k ~n ~oname n_inputs rel1 rel2 =
       (L.map variable_tuples
              ~f:(fun (vec1, _) ->
                L.map variable_tuples ~f:(fun (vec2, _) ->
-                       if (compare_lists ~compare:compare_expr vec1 vec2) = 0 then []
+                       if (compare_lists_ignore_order ~compare:compare_expr vec1 vec2) = 0 then []
                        else [XOR(L.map (range 0 (L.length vec1))
                                ~f:(fun i ->
                                  XOR([F("G"^(string_of_int i), 0, POS, ([], [L.nth_exn vec1 i]), false, false, None);

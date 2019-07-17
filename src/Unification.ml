@@ -21,7 +21,7 @@ let equal_unif u1 u2 =
     if d <> 0 then d
     else compare_expr e1 e2
   in
-  (compare_lists (Map.to_alist u1) (Map.to_alist u2) ~compare) = 0
+  (compare_lists_ignore_order (Map.to_alist u1) (Map.to_alist u2) ~compare) = 0
 
 let rec apply_unifier_expr sigma expr =
   let f = apply_unifier_expr sigma in

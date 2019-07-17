@@ -61,8 +61,6 @@ let pp_matrix pp_elt f m =
   L.iter m ~f:(F.fprintf f "[%a]\n" (pp_list ", " pp_elt))
 
 let rec compare_lists ~compare list1 list2 =
-  let list1 = L.sort ~cmp:compare list1 in
-  let list2 = L.sort ~cmp:compare list2 in
   match list1, list2 with
   | [], [] -> 0
   | [], _  -> -1
@@ -70,6 +68,11 @@ let rec compare_lists ~compare list1 list2 =
   | a :: rest1, b :: rest2 ->
      let c = compare a b in
      if c = 0 then compare_lists ~compare rest1 rest2 else c
+
+let compare_lists_ignore_order ~compare list1 list2 =
+  let list1 = L.sort ~cmp:compare list1 in
+  let list2 = L.sort ~cmp:compare list2 in
+  compare_lists ~compare list1 list2
 
 let split_list ~f list =
   let rec aux out1 out2 = function
