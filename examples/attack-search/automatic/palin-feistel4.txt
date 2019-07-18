@@ -11,4 +11,11 @@ search_attack INDCCA {
     x5 = x3 + F1(x4);
     return x4, x5.
 
+  oracle R^-1 (x4,x5) :=
+    x3 = x5 + F1(x4);
+    x2 = x4 + F2(x3);
+    x1 = x3 + F2(x2);
+    x0 = x2 + F1(x1);
+    return x0, x1.
+
 }.
