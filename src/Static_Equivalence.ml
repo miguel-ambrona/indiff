@@ -9,20 +9,27 @@ open Unification
 
 (* ** XOR static equivalence *)
 
+
+let pp_bool _fmt b = if b then F.printf "1" else F.printf "0"
+
 let find_all_solutions matrix =
+  F.printf "MATRIX:\n";
+  (L.iter matrix
+     ~f:(fun row -> F.printf "[%a]\n" (pp_list ", " pp_bool) row)
+  );
   (* This function computes all the solutions of a linear system, given the matrix (A | b) in echelon form *)
   let n_vars = (L.length (L.hd_exn matrix)) - 1 in
   let non_free_cols =
     L.fold_left (range 0 n_vars)
        ~init:([],[])
        ~f:(fun (cols,rows) c ->
-         let count, row =
-           L.fold_left matrix
+           let count, row =
+             L.fold_left matrix
                ~init:(0,None)
                ~f:(fun (count,r) row -> if Z2.is_zero (L.nth_exn row c) then (count,r) else (count+1, Some row) ) in
-         if count = 1 && not(L.mem rows row) then (cols @ [c], rows @ [row])
-         else (cols,rows)
-       )
+           if count = 1 && not(L.mem rows row) then (cols @ [c], rows @ [row])
+           else (cols,rows)
+         )
     |> (fun (cols,_) -> cols)
   in
   let free_cols = L.filter (range 0 n_vars) ~f:(fun c -> not(L.mem non_free_cols c)) in
@@ -33,28 +40,30 @@ let find_all_solutions matrix =
          count <> 1
        )
   in
-   *)
+  *)
+  (*let () = F.printf "HOLALA %d\n" (L.length free_cols) in
+    let () = F.printf "%a\n" (pp_list ", " pp_int) free_cols in*)
   L.map (all_bit_strings (L.length free_cols))
-     ~f:(fun free ->
-       let solution_list  = L.zip_exn free_cols free in
-       let solution = Int.Map.of_alist_exn solution_list in
-       L.map matrix
+    ~f:(fun free ->
+        let solution_list  = L.zip_exn free_cols free in
+        let solution = Int.Map.of_alist_exn solution_list in
+        L.map matrix
           ~f:(fun row ->
             match L.filter (range 0 n_vars) ~f:(fun c -> (Z2.is_one (L.nth_exn row c)) && not(L.mem free_cols c)) with
-            | [c] ->
-               let value =
-                 L.fold_left (range 0 n_vars)
-                     ~init:Z2.zero
-                     ~f:(fun v c' -> if c = c' || (Z2.is_zero (L.nth_exn row c')) then v else Z2.add v (Map.find_exn solution c'))
-               in
-               [(c, Z2.add value (L.nth_exn row n_vars))]
-            | _ -> assert (Z2.is_zero (L.nth_exn row n_vars)); [] (* Otherwise, there is no solution and this should not be executed *)
+              | [c] ->
+                let value =
+                  L.fold_left (range 0 n_vars)
+                    ~init:Z2.zero
+                    ~f:(fun v c' -> if c = c' || (Z2.is_zero (L.nth_exn row c')) then v else Z2.add v (Map.find_exn solution c'))
+                in
+                [(c, Z2.add value (L.nth_exn row n_vars))]
+              | _ -> assert (Z2.is_zero (L.nth_exn row n_vars)); [] (* Otherwise, there is no solution and this should not be executed *)
+            )
+        |> (fun l ->
+            L.sort ((L.concat l) @ solution_list) ~cmp:(fun (a,_) (b,_) -> Int.compare a b)
+            |> L.map ~f:(fun (_,v) -> v)
           )
-       |> (fun l ->
-         L.sort ((L.concat l) @ solution_list) ~cmp:(fun (a,_) (b,_) -> Int.compare a b)
-         |> L.map ~f:(fun (_,v) -> v)
-       )
-     )
+      )
 
 let linalg_nth_solution ~nth matrix =
   (* This function computes all the solutions of a linear system, given the matrix (A | b) in echelon form *)
@@ -95,7 +104,7 @@ let linalg_nth_solution ~nth matrix =
        |> L.map ~f:(fun (_,v) -> v)
            ))
 
-let xor_deduce_all frame expr =
+let xor_lin_span frame expr =
   let knowledge = L.map frame.frame_sigma ~f:ground_xor_to_list in
   let e = ground_xor_to_list expr in
   let constants =
@@ -109,28 +118,49 @@ let xor_deduce_all frame expr =
     let contains_const c l = L.mem l c ~equal:S.equal in
     let matrix = L.map forbidden ~f:(fun c -> L.map knowledge ~f:(contains_const c)) in
     let vector = L.map forbidden ~f:(fun c -> contains_const c e) in
-    match Lin.solve_matrix matrix vector with
-    | None -> []
-    | Some matrix ->
-       L.map (find_all_solutions matrix)
-           ~f:(fun solution ->
-             XOR(
-                 (L.fold_left (L.zip_exn solution frame.frame_sigma)
-                    ~init:expr
-                    ~f:(fun sum' (b,e') -> if b then XOR([sum'; e']) else sum')
-                 ) :: (
-                   L.filter (L.zip_exn (range 0 (L.length solution)) solution) ~f:(fun (_,s) -> s)
-                   |> L.map ~f:(fun (i,_) -> Var ("%" ^ (string_of_int (i+1))) )
-                 )
-                 )
-             |> simplify_expr
-           )
+    Lin.reduced_row_echelon_form matrix vector
+(*
+    let matrix = Lin.reduced_row_echelon_form matrix vector in
+    L.map (find_all_solutions matrix)
+        ~f:(fun solution ->
+            XOR(
+              (L.fold_left (L.zip_exn solution frame.frame_sigma)
+                 ~init:expr
+                 ~f:(fun sum' (b,e') -> if b then XOR([sum'; e']) else sum')
+              ) :: (
+                L.filter (L.zip_exn (range 0 (L.length solution)) solution) ~f:(fun (_,s) -> s)
+                |> L.map ~f:(fun (i,_) -> Var ("%" ^ (string_of_int (i+1))) )
+              )
+            )
+            |> simplify_expr
+          )
+*)
 
 let xor_static_equivalence frame1 frame2 =
-  if compare_lists_ignore_order ~compare:String.compare frame1.frame_names frame2.frame_names <> 0 then false
-  else if (L.length frame1.frame_sigma) <> (L.length frame2.frame_sigma) then false
+  (*
+  F.printf "static equivalent {%a} with names = {%a}\n vs\n {%a} with names = {%a}\n"
+    (pp_list ", " pp_expr) frame1.frame_sigma (pp_list ", " pp_string) frame1.frame_names
+    (pp_list ", " pp_expr) frame2.frame_sigma (pp_list ", " pp_string) frame2.frame_names;
+  *)
+
+  let names_str = "Please, use the same list of forbidden names for both frames" in
+  if compare_lists ~compare:String.compare frame1.frame_names frame2.frame_names <> 0 then
+    failwith names_str
+  else if (L.length frame1.frame_sigma) <> (L.length frame2.frame_sigma) then failwith names_str
   else
-    let zero_productions1 = xor_deduce_all frame1 Zero in
+    let span1 = xor_lin_span frame1 Zero in
+    let span2 = xor_lin_span frame2 Zero in
+
+    let different =
+      if (L.length span1) <> (L.length span2) then true
+      else
+        L.exists (L.zip_exn span1 span2)
+          ~f:(fun (row1, row2) ->
+              L.exists (L.zip_exn row1 row2) ~f:(fun (t1,t2) -> t1 <> t2))
+    in
+    not (different)
+
+    (*
     let substitution2 =
       String.Map.of_alist_exn
         (L.zip_exn (L.map (range 0 (L.length frame2.frame_sigma)) ~f:(fun i -> "%" ^ (string_of_int (i+1)))) frame2.frame_sigma)
@@ -138,13 +168,14 @@ let xor_static_equivalence frame1 frame2 =
     if L.exists zero_productions1 ~f:(fun p -> not (equal_expr (simplify_expr (apply_unifier_expr substitution2 p)) Zero)) then
       false
     else
+
       let zero_productions2 = xor_deduce_all frame2 Zero in
       let substitution1 =
         String.Map.of_alist_exn
           (L.zip_exn (L.map (range 0 (L.length frame1.frame_sigma)) ~f:(fun i -> "%" ^ (string_of_int (i+1)))) frame1.frame_sigma)
       in
       not (L.exists zero_productions2 ~f:(fun p -> not (equal_expr (simplify_expr (apply_unifier_expr substitution1 p)) Zero)))
-
+*)
 
 (* ** Static equivalence for functions with inverses *)
 
@@ -262,7 +293,7 @@ let one_dir_fun_static_equivalence frame1 frame2 =
               (*F.printf "HOLA: %a vs %a\n" pp_expr f2 pp_expr formula2;*)
               if equal_expr f2 formula2 then (accum_sat @ [e]), b
               else
-                (* let () = F.printf "We can distinguish by: %a vs %a\n" pp_expr f pp_expr formula' in *)
+                (*let () = F.printf "We can distinguish by: %a vs %a\n" pp_expr f pp_expr formula' in *)
                 ([], false)
            end
        )
@@ -270,7 +301,7 @@ let one_dir_fun_static_equivalence frame1 frame2 =
   b
 
 let fun_static_equivalence frame1 frame2 =
-  if compare_lists_ignore_order ~compare:String.compare frame1.frame_names frame2.frame_names <> 0 then false
+  if compare_lists ~compare:String.compare frame1.frame_names frame2.frame_names <> 0 then false
   else if (L.length frame1.frame_sigma) <> (L.length frame2.frame_sigma) then false
   else
     if one_dir_fun_static_equivalence frame1 frame2 then one_dir_fun_static_equivalence frame2 frame1
@@ -279,6 +310,7 @@ let fun_static_equivalence frame1 frame2 =
 (* ** Static equivalence for the combined theory *)
 
 let extend_frame frame1 frame2 =
+  (*let () = F.printf "I am here\n" in*)
   let subterms2 =
     L.map frame2.frame_sigma ~f:subterms |> L.concat
     |> L.filter ~f:(fun e -> not (L.mem frame2.frame_sigma e ~equal:(fun e1 e2 -> equal_expr (simplify_expr e1) (simplify_expr e2))) )
@@ -303,7 +335,8 @@ let extend_frame frame1 frame2 =
   { frame1 with frame_sigma = (L.map (frame1.frame_sigma @ new_terms_for_sigma1) ~f:simplify_expr ) }
 
 let static_equivalence frame1 frame2 =
-  if compare_lists_ignore_order ~compare:String.compare frame1.frame_names frame2.frame_names <> 0 then false
+  (*let () = F.printf "HELLO!!!\n" in*)
+  if compare_lists ~compare:String.compare frame1.frame_names frame2.frame_names <> 0 then false
   else if (L.length frame1.frame_sigma) <> (L.length frame2.frame_sigma) then false
   else
     let extension1 = extend_frame frame1 frame2 in
@@ -357,7 +390,9 @@ let static_equivalence frame1 frame2 =
         frame_sigma = L.map frame2'.frame_sigma ~f:xor_replace;
       }
     in
-    if fun_static_equivalence frame1'_rho_xor frame2'_rho_xor then
+    let b = fun_static_equivalence frame1'_rho_xor frame2'_rho_xor in
+    (*let () = F.printf "\nAAAAA\n" in*)
+    if b then
       let frame1'_rho_fun =
         { frame_names = fun_names @ frame1.frame_names;
           frame_sigma = L.map frame1'.frame_sigma ~f:fun_replace;

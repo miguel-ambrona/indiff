@@ -76,8 +76,7 @@ module LinAlg (Field : Field) = struct
       f c
     done
 
-  (* ** Equation solving
-   * ----------------------------------------------------------------------- *)
+  (* ** Equation solving *)
 
   let make_pivot_one m r c =
     let pivot_inverse = inv m.(r).(c) in
@@ -96,7 +95,8 @@ module LinAlg (Field : Field) = struct
            if not (is_zero m.(r).(c)) then (
              if !one_rowidx = None
              then one_rowidx := Some(r)
-             else raise Not_found (*i two non-zero entries i*)));
+             else
+               raise Not_found (*i two non-zero entries i*)));
          match !one_rowidx with
          | None ->
             col_is_z.(c) <- true
@@ -173,5 +173,48 @@ module LinAlg (Field : Field) = struct
       | Solved a ->
          match a with | None -> None | Some _ -> Some (List.map to_list (to_list m))
     in go ()
+
+  let reduced_row_echelon_form (m : (t list) list) (b : t list) =
+    (* Computes reduced row Echelon form of (m || b) *)
+    (* For now, this assumes the field is F2 *)
+
+    let module L = Core_kernel.Std.List in
+    let n = (List.length (L.hd_exn m)) + 1in
+    let sort_rows l =
+      l |> safe_sort ~cmp:(fun row1 row2 ->
+          let (id1, _) = match L.find (L.zip_exn (range 0 n) row1) ~f:(fun (_,t) -> not (is_zero t)) with
+            | None -> (n+1,zero)
+            | Some id -> id
+          in
+          let (id2, _) = match L.find (L.zip_exn (range 0 n) row2) ~f:(fun (_,t) -> not (is_zero t)) with
+            | None -> (n+1,zero)
+            | Some id -> id
+          in
+          if id1 < id2 then -1 else if id1 = id2 then 0 else 1
+        )
+    in
+
+    let sol =
+      match solve_matrix m b with
+      | None -> []
+      | Some l ->
+        L.fold_left (range 0 (L.length m))
+          ~init:l
+          ~f:(fun l' i ->
+              let l' = sort_rows l' in
+              let row_i = L.nth_exn l' i in
+              match L.find (L.zip_exn (range 0 n) row_i) ~f:(fun (_,t) -> not (is_zero t)) with
+              | None -> l'
+              | Some (pivot_idx, _) ->
+                L.map (L.zip_exn l' (range 0 (L.length m)))
+                  ~f:(fun (row,i') ->
+                      if i <> i' && (not (is_zero (L.nth_exn row pivot_idx))) then
+                        L.map (L.zip_exn row row_i) ~f:(fun (t,ti) -> Field.add t (Field.neg ti))
+                      else row
+                    )
+            )
+    in
+    L.filter sol
+      ~f:(fun row -> L.exists row ~f:(fun t -> not (is_zero t)))
 
 end
